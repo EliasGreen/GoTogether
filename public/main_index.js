@@ -1,27 +1,6 @@
 // client-side js for [index]
 
 $(function() {
-  console.log('hello world :o');
-  
-  $.get('/dreams', function(dreams) {
-    dreams.forEach(function(dream) {
-      $('<li></li>').text(dream).appendTo('ul#dreams');
-    });
-  });
-
-  $('form').submit(function(event) {
-    event.preventDefault();
-    var dream = $('input').val();
-    $.post('/dreams?' + $.param({dream: dream}), function() {
-      $('<li></li>').text(dream).appendTo('ul#dreams');
-      $('input').val('');
-      $('input').focus();
-    });
-  });
-
-  
-  
-  
   
   
   /*********/
@@ -42,4 +21,87 @@ $(function() {
         x[img_index-1].style.display = "block";  
         setTimeout(slide, 5000); // Change image every 2 seconds
     }
+
+  /*********/
+  // Modals
+  /*********/
+   
+    // Registration
+        let registrationModal = document.getElementById('modal-registration');
+
+        // Get the button that opens the modal
+        let registrationBtn = document.getElementById("btn-registration");
+
+        // Get the <span> element that closes the modal
+        let span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks the button, open the modal 
+        registrationBtn.onclick = function() {
+            registrationModal.style.display = "block";
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+            registrationModal.style.display = "none";
+        }
+        
+    // Login
+        let loginModal = document.getElementById('modal-login');
+
+        // Get the button that opens the modal
+        let loginBtn= document.getElementById("btn-login");
+
+        // Get the <span> element that closes the modal
+        let spanLogin = document.getElementsByClassName("close")[1];
+
+        // When the user clicks the button, open the modal 
+        loginBtn.onclick = function() {
+            loginModal.style.display = "block";
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        spanLogin.onclick = function() {
+            loginModal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if ((event.target == loginModal) || (event.target == registrationModal)) {
+                loginModal.style.display = "none";
+                registrationModal.style.display = "none";
+            }
+        }
+        
+        
+  /*****************/
+  // Modal's submits
+  /*****************/
+        const registrationForm = document.forms.namedItem("registrationForm");
+        
+        registrationForm.addEventListener("submit", (event) => {
+           let avatarImg = document.getElementById("avatar").files[0];
+          
+           let data = new FormData(registrationForm);
+           
+           const request = new XMLHttpRequest();
+           request.open("POST", "/register", true);
+          
+           request.onload = (reqEvent) => {
+            
+               if(request.status == 200) {
+
+               }
+
+               else {
+
+               }
+           };
+           
+           request.send(data);
+           event.preventDefault();
+        }, false);
+
+  
+  
+/* $(JQuery) Border $(JQuery) */
 });
