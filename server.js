@@ -1,40 +1,46 @@
-// server.js
-// where your node app starts
-
 // init project
-var express = require('express');
-var app = express();
 
-// we've started you off with Express, 
-// but feel free to use whatever libs or frameworks you'd like through `package.json`.
+//multer
+const multer  = require('multer')
+const upload = multer({ dest: 'uploads/' })
 
-// http://expressjs.com/en/starter/static-files.html
+//express
+const express = require('express');
+const app = express();
+
+// USEs
 app.use(express.static('public'));
 app.use(express.static('styles'));
 
-// http://expressjs.com/en/starter/basic-routing.html
+
+/************/
+ /* +Gets+ */
+/************/
+
+// GET MAIN PAGE
 app.get("/", function (request, response) {
   response.sendFile(__dirname + '/views/index.html');
 });
 
-app.get("/dreams", function (request, response) {
-  response.send(dreams);
-});
+/************/
+ /* -Gets- */
+/************/
 
-// could also use the POST body instead of query string: http://expressjs.com/en/api.html#req.body
-app.post("/dreams", function (request, response) {
-  dreams.push(request.query.dream);
-  response.sendStatus(200);
-});
+/************/
+/* +POSTS+ */
+/************/
 
-// Simple in-memory store for now
-var dreams = [
-  "Find and count some sheep",
-  "Climb a really tall mountain",
-  "Wash the dishes"
-];
+// POST REGISTRATION
+app.post('/register', upload.single('avatar'), function (req, res, next) {
+  console.log(req.file);
+  res.send(200);
+})
 
-// listen for requests :)
-var listener = app.listen(process.env.PORT, function () {
+/************/
+/* -POSTS- */
+/************/
+
+// listener
+const listener = app.listen(process.env.PORT, function () {
   console.log('Your app is listening on port ' + listener.address().port);
 });

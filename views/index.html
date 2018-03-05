@@ -17,9 +17,84 @@
     <link rel="stylesheet" href="/style_index.css">
   </head>
   <body>
+    
+    <!-- The Registration Modal -->
+    <div id="modal-registration" class="modal">
+
+      <!-- Modal content -->
+      <div class="modal-content">
+        <div class="modal-header">
+          <span class="close">&times;</span>
+          <h2>Registration</h2>
+        </div>
+        <div class="modal-body">
+          <form method="post" id="registrationForm" name="registration" enctype="multipart/form-data">
+            <div>
+              <label for="avatar">Avatar:</label>
+              <input type="file" id="avatar" name="avatar" accept=".jpg, .jpeg, .png" multiple required>
+            </div>
+            <div>
+              <label for="name">Name:</label>
+              <input type="text" id="name" name="name" required>
+            </div>
+            <div>
+              <label for="lastname">Lastname:</label>
+              <input type="text" id="lastname" name="lastname" required>
+            </div>
+            <div>
+              <label for="email">Email:</label>
+              <input type="email" id="email" name="email" required>
+            </div>
+            <div>
+              <label for="password">Password:</label>
+              <input type="password" id="password" name="password" required>
+            </div>
+            <div>
+              <button id="submit-registration" type="submit" name="submit">Sign up</button>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+        </div>
+      </div>
+
+    </div>
+    
+    
+    <!-- The Login Modal -->
+    <div id="modal-login" class="modal">
+
+      <!-- Modal content -->
+      <div class="modal-content">
+        <div class="modal-header">
+          <span class="close">&times;</span>
+          <h2>Login</h2>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div>
+              <label for="email">Email:</label>
+              <input type="email" id="email-login" name="email" required>
+            </div>
+            <div>
+              <label for="password">Password:</label>
+              <input type="password" id="password-login" name="password" required>
+            </div>
+            <div>
+              <button id="submit-login">Login</button>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+        </div>
+      </div>
+
+    </div>
+    
+    
     <header>
       <h1>
-        <img src="https://www.freepptbackgrounds.net/wp-content/uploads/2013/11/Hands-Together-Design-Template.jpg" alt="Logo" class="logo">
+        <img src="https://www.easystorehosting.com/wp-content/uploads/2015/12/Creating-online-store-1000x1000.jpg" alt="Logo" class="logo">
         Go<span id="t-letter">T</span>ogether
       </h1>
     </header>
