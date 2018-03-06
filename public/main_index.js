@@ -37,6 +37,7 @@ $(function() {
 
         // When the user clicks the button, open the modal 
         registrationBtn.onclick = function() {
+            $("#previewImgBlock").hide();
             registrationModal.style.display = "block";
         }
 
@@ -77,6 +78,29 @@ $(function() {
   // Modal's submits
   /*****************/
         const registrationForm = document.forms.namedItem("registrationForm");
+        let reader = new FileReader();
+  
+       $('input:file').change(
+          (e) => {
+            
+            $("#previewImgBlock").show();
+            
+            // if size of Avatar img > 32 KV => throw warning
+            if(Math.round(document.getElementById("avatar").files[0].size/1024) > 64) {
+              console.log(Math.round(document.getElementById("avatar").files[0].size/1024));
+              $("#avatar").val("");
+              $("#textOfPreview").css("color", "red");
+              $("#textOfPreview").text("Image must be less than 64kb!");
+            }
+            else {
+              reader.readAsBinaryString(document.getElementById("avatar").files[0]);
+              reader.onload = () => {
+                $("#textOfPreview").css("color", "black");
+                $("#textOfPreview").text("Preview of Avatar:");
+                $('#previewImg').attr("src","data:image/png;base64, " + btoa(reader.result));     
+              } 
+            }
+          });
         
         registrationForm.addEventListener("submit", (event) => {
            let avatarImg = document.getElementById("avatar").files[0];
@@ -87,8 +111,6 @@ $(function() {
            /***/
            // encode BASE64
            /***/
-            let reader = new FileReader();
-
             reader.readAsBinaryString(avatarImg);
 
             reader.onload = function() {
@@ -114,7 +136,7 @@ $(function() {
                     return;
                   }
                     let response = JSON.parse(this.responseText);
-                    console.log(response);
+                    //console.log(response);
                   }
                 
                 

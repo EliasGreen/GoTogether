@@ -40,7 +40,7 @@ app.get("/", (request, response) => {
 
 // POST REGISTRATION
 app.post('/register', (request, response,) => {
-  //console.log(req.body);
+  //console.log(request.body);
   response.json({"error": "zerro"});
 })
 

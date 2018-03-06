@@ -260,6 +260,28 @@ footer .a-wrapper{
   width: 100%;
   font-family: 'Indie Flower', cursive;
 }
+
+#previewImg {
+  width: calc(100% - 80px);
+  height: 200px;
+  margin-left: 40px;
+  margin-top: 10px;
+}
+
+#previewImgBlock {
+  display: none;
+  width: 300px;
+  height: 300px;
+  position: absolute;
+  right: 150px;
+  top: 110px;
+  border: 10px solid hsla(0, 0%, 19%, 0.53);
+}
+
+#previewImgBlock h4 {
+  text-align: center;
+  margin-top: 10px;
+}
 /**********/
 /**********/
 /**********/
