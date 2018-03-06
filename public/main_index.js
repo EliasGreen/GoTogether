@@ -37,6 +37,7 @@ $(function() {
 
         // When the user clicks the button, open the modal 
         registrationBtn.onclick = function() {
+            $("#previewImgBlock").hide();
             registrationModal.style.display = "block";
         }
 
@@ -77,28 +78,76 @@ $(function() {
   // Modal's submits
   /*****************/
         const registrationForm = document.forms.namedItem("registrationForm");
+        let reader = new FileReader();
+  
+       $('input:file').change(
+          (e) => {
+            
+            $("#previewImgBlock").show();
+            
+            // if size of Avatar img > 32 KV => throw warning
+            if(Math.round(document.getElementById("avatar").files[0].size/1024) > 64) {
+              console.log(Math.round(document.getElementById("avatar").files[0].size/1024));
+              $("#avatar").val("");
+              $("#textOfPreview").css("color", "red");
+              $("#textOfPreview").text("Image must be less than 64kb!");
+            }
+            else {
+              reader.readAsBinaryString(document.getElementById("avatar").files[0]);
+              reader.onload = () => {
+                $("#textOfPreview").css("color", "black");
+                $("#textOfPreview").text("Preview of Avatar:");
+                $('#previewImg').attr("src","data:image/png;base64, " + btoa(reader.result));     
+              } 
+            }
+          });
         
         registrationForm.addEventListener("submit", (event) => {
            let avatarImg = document.getElementById("avatar").files[0];
+           //get data from registration form (without img)
+           let formData = $("#registrationForm" ).serializeArray();
           
-           let data = new FormData(registrationForm);
-           
-           const request = new XMLHttpRequest();
-           request.open("POST", "/register", true);
-          
-           request.onload = (reqEvent) => {
-            
-               if(request.status == 200) {
+           /**********************/
+           /***/
+           // encode BASE64
+           /***/
+            reader.readAsBinaryString(avatarImg);
 
-               }
+            reader.onload = function() {
+                const xhr = new XMLHttpRequest();
 
-               else {
+                xhr.open('POST', '/register', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
-               }
-           };
-           
-           request.send(data);
-           event.preventDefault();
+
+                let body = 'name=' + encodeURIComponent(formData[0]["value"]) +
+                '&lastname=' + encodeURIComponent(formData[1]["value"]) +
+                '&email=' + encodeURIComponent(formData[2]["value"]) +
+                '&password=' + encodeURIComponent(formData[3]["value"]) +
+                '&img=' + encodeURIComponent(btoa(reader.result));
+
+
+                xhr.send(body);
+
+                xhr.onreadystatechange = function() {
+                  if (this.readyState != 4) return;
+                  if (this.status != 200) {
+                    alert( 'error: ' + (this.status ? this.statusText : 'request has not been set') );
+                    return;
+                  }
+                    let response = JSON.parse(this.responseText);
+                    //console.log(response);
+                  }
+                
+                
+                //preventing
+                event.preventDefault();
+            };
+            reader.onerror = function() {
+                console.log('there are some problems');
+            };             
+           /**********************/   
+          event.preventDefault();
         }, false);
 
   
