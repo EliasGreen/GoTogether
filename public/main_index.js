@@ -113,14 +113,19 @@ $(function() {
                     alert( 'error: ' + (this.status ? this.statusText : 'request has not been set') );
                     return;
                   }
-                  // TODO
-                  console.log("!2321")
+                    let response = JSON.parse(this.responseText);
+                    console.log(response);
                   }
+                
+                
+                //preventing
+                event.preventDefault();
             };
             reader.onerror = function() {
                 console.log('there are some problems');
             };             
-           /**********************/           
+           /**********************/   
+          event.preventDefault();
         }, false);
 
   

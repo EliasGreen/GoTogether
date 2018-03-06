@@ -26,7 +26,7 @@ app.use(bodyParser.urlencoded({
 /************/
 
 // GET MAIN PAGE
-app.get("/", function (request, response) {
+app.get("/", (request, response) => {
   response.sendFile(__dirname + '/views/index.html');
 });
 
@@ -39,9 +39,9 @@ app.get("/", function (request, response) {
 /************/
 
 // POST REGISTRATION
-app.post('/register', function (req, res,) {
+app.post('/register', (request, response,) => {
   //console.log(req.body);
-  res.sendStatus(200);
+  response.json({"error": "zerro"});
 })
 
 /************/
