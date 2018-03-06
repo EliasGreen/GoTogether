@@ -1,16 +1,24 @@
-// init project
-
-//multer
-const multer  = require('multer')
-const upload = multer({ dest: 'uploads/' })
+// *init project*
 
 //express
 const express = require('express');
 const app = express();
 
+//body parser
+const bodyParser = require('body-parser')
+
+/*********************************************/
+
+
+
 // USEs
 app.use(express.static('public'));
 app.use(express.static('styles'));
+
+app.use(bodyParser.json());   
+app.use(bodyParser.urlencoded({ 
+  extended: true
+}));
 
 
 /************/
@@ -31,9 +39,9 @@ app.get("/", function (request, response) {
 /************/
 
 // POST REGISTRATION
-app.post('/register', upload.single('avatar'), function (req, res, next) {
-  console.log(req.file);
-  res.send(200);
+app.post('/register', function (req, res,) {
+  //console.log(req.body);
+  res.sendStatus(200);
 })
 
 /************/

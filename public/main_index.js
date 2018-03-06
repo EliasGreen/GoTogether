@@ -80,25 +80,47 @@ $(function() {
         
         registrationForm.addEventListener("submit", (event) => {
            let avatarImg = document.getElementById("avatar").files[0];
+           //get data from registration form (without img)
+           let formData = $("#registrationForm" ).serializeArray();
           
-           let data = new FormData(registrationForm);
-           
-           const request = new XMLHttpRequest();
-           request.open("POST", "/register", true);
-          
-           request.onload = (reqEvent) => {
-            
-               if(request.status == 200) {
+           /**********************/
+           /***/
+           // encode BASE64
+           /***/
+            let reader = new FileReader();
 
-               }
+            reader.readAsBinaryString(avatarImg);
 
-               else {
+            reader.onload = function() {
+                const xhr = new XMLHttpRequest();
 
-               }
-           };
-           
-           request.send(data);
-           event.preventDefault();
+                xhr.open('POST', '/register', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+
+                let body = 'name=' + encodeURIComponent(formData[0]["value"]) +
+                '&lastname=' + encodeURIComponent(formData[1]["value"]) +
+                '&email=' + encodeURIComponent(formData[2]["value"]) +
+                '&password=' + encodeURIComponent(formData[3]["value"]) +
+                '&img=' + encodeURIComponent(btoa(reader.result));
+
+
+                xhr.send(body);
+
+                xhr.onreadystatechange = function() {
+                  if (this.readyState != 4) return;
+                  if (this.status != 200) {
+                    alert( 'error: ' + (this.status ? this.statusText : 'request has not been set') );
+                    return;
+                  }
+                  // TODO
+                  console.log("!2321")
+                  }
+            };
+            reader.onerror = function() {
+                console.log('there are some problems');
+            };             
+           /**********************/           
         }, false);
 
   
