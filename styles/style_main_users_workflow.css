@@ -1,0 +1,15 @@
+/* styles for [main_users_workflow] */
+
+
+/*****************/
+/* Main Settings */
+/*****************/
+* {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: helvetica, arial, sans-serif;
+  margin: 0;
+}

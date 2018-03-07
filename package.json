@@ -11,6 +11,14 @@
   },
   "dependencies": {
     "express": "^4.16.2",
+    "express-session": "*",
+    "dotenv": "^4.0.0",
+    "connect-mongodb-session": "^1.4.0",
+    "cookie-parser": "^1.4.3",
+    "bcrypt": "^1.0.3",
+    "mongodb": "*",
+    "mongoose": "^4.13.8",
+    "passport": "^0.4.0",
     "body-parser": "^1.18.2"
   },
   "engines": {
