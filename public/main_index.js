@@ -78,6 +78,7 @@ $(function() {
   // Modal's submits
   /*****************/
         const registrationForm = document.forms.namedItem("registrationForm");
+        const loginForm = document.forms.namedItem("loginForm");
         let reader = new FileReader();
   
        $('input:file').change(
@@ -136,7 +137,7 @@ $(function() {
                     return;
                   }
                     let response = JSON.parse(this.responseText);
-                    //console.log(response);
+                    if(response.error === 0) window.location = "/main";
                   }
                 
                 
@@ -148,6 +149,45 @@ $(function() {
             };             
            /**********************/   
           event.preventDefault();
+        }, false);
+  
+  
+  /***************
+  *********************
+  ********* Login **
+  ***/
+  
+      loginForm.addEventListener("submit", (event) => {
+           //get data from login form
+           let formData = $("#loginForm" ).serializeArray();
+          
+           /**********************/
+                const xhr = new XMLHttpRequest();
+
+                xhr.open('POST', '/login', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+
+                let body = '&email=' + encodeURIComponent(formData[0]["value"]) +
+                '&password=' + encodeURIComponent(formData[1]["value"]);
+
+
+                xhr.send(body);
+
+                xhr.onreadystatechange = function() {
+                  if (this.readyState != 4) return;
+                  if (this.status != 200) {
+                    alert( 'error: ' + (this.status ? this.statusText : 'request has not been set') );
+                    return;
+                  }
+                    let response = JSON.parse(this.responseText);
+                    if(response.error === 0) window.location = "/main";
+                  }
+                
+                
+                //preventing
+                event.preventDefault();
+
         }, false);
 
   
