@@ -27,15 +27,14 @@ const mongoose = require('mongoose');
 // connection URL
 const url = process.env.MONGOLAB_URI;      
 // connection
-const promise_connection = mongoose.connect(url, {
-	useMongoClient: true
-});
+const promise_connection = mongoose.connect(url);
 let db = mongoose.connection;
 // if connection is success
 promise_connection.then(function(db){
 	console.log('Connected to mongodb');
 });
-
+// markers storage 
+let markers = [];
 /*********************************************/
 
 
@@ -108,7 +107,24 @@ app.get("/", (request, response) => {
 
 // GET MAIN PAGE
 app.get("/main", (request, response) => {
-  response.sendFile(__dirname + '/views/main_users_workflow.html');
+  if(request.isAuthenticated()) {
+    response.sendFile(__dirname + '/views/main_users_workflow.html');
+  }
+  else {
+    response.sendFile(__dirname + '/views/index.html');
+  }
+});
+
+// GET infromation about current loged in user
+app.get("/user-inf", (request, response) => {
+  userModel.findById(request.session.passport.user, (err, user) => {
+         if(!err) {
+           response.json({name: user.name, lastname: user.lastname, img: user.img});
+         } 
+         else {
+           console.log("ERROR!: ", err);
+         } 
+    });
 });
 
 /************/
@@ -180,6 +196,10 @@ app.post("/logout", function(request, response) {
           request.session.destroy(function(err) {
           response.status(200).clearCookie('connect.sid', {path: '/'}).json({error: 0});
      })
+});
+/***********************************/
+app.post("/add-marker", function(request, response) {
+          markers.push({user:, coords: {lat:123, lon: 123}});
 });
 /************/
 /* -POSTS- */

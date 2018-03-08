@@ -18,19 +18,87 @@
   </head>
   <body>
     
-    <header>
-      <button id="logout">Logout</button>
-    </header>
+    <div id="main-block">
+     
+      <div id="map-block"></div>
+      
+      <div id="user-inf-block">
+        <img id="user-avatar" alt="user-avatar">
+        <div id="name"></div>
+        <div id="lastname"></div>
+        <button id="logout">
+          Logout
+        </button>
+        <div class="line"></div>
+        <h3>
+          Your comment:
+        </h3>
+        <textarea id="comment" name="comment" cols="40" rows="9"></textarea>
+        <button id="start-searching">
+          Find a partner!
+        </button>
+      </div>
+      
+    </div> 
+    <!-- Scripts -->
+    
+    <script> 
+      function initMap() {
+         if ("geolocation" in navigator) {
+           // get user img
+           const xhr = new XMLHttpRequest();
 
-    <main>
-      main
-    </main>
+            xhr.open('GET', '/user-inf', true);
 
-    <footer>
-      footer
-    </footer>
+            xhr.send();
 
-    <!-- Your web-app is https, so your scripts need to be too -->
+            xhr.onreadystatechange = function() {
+              if (this.readyState != 4) return;
+              if (this.status != 200) {
+                alert( 'error: ' + (this.status ? this.statusText : 'request has not been set') );
+                return;
+              }
+              let response = JSON.parse(this.responseText);
+                //set the map
+                navigator.geolocation.getCurrentPosition(function(position) { 
+                  let sergievskaya = {lat: position.coords.latitude, lng: position.coords.longitude};
+                  const map = new google.maps.Map(document.getElementById("map-block"), {
+                      zoom: 16,
+                      center: sergievskaya
+                    });
+                  $("#start-searching").click(() => {
+                      const infoWindow = new google.maps.InfoWindow({
+                        content: $("#comment").val()
+                      });
+                      const marker = new google.maps.Marker({
+                        position: sergievskaya,
+                        map: map,
+                        icon: {
+                                url: "data:image/png;base64, " + response.img,
+                                scaledSize: new google.maps.Size(32, 32),
+                                origin: new google.maps.Point(0, 0),
+                                anchor: new google.maps.Point(0, 32)
+                              }
+                      });
+
+                    marker.addListener('click', function() {
+                      infoWindow.open(map, marker);
+                    });
+
+                  });
+                });
+              
+              }   
+            } 
+    else {
+            alert("geolocation is now working on your device/browser");
+          }
+                }
+    </script>
+    
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxlG02FmqKCtr04H3t6RQjA6D3u23K27I&callback=initMap">
+    </script>
     <script src="https://code.jquery.com/jquery-2.2.1.min.js"
             integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00="
             crossorigin="anonymous"></script>
