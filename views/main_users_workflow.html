@@ -67,6 +67,25 @@
                       center: sergievskaya
                     });
                   $("#start-searching").click(() => {
+                    const xhr = new XMLHttpRequest();
+
+                        xhr.open('POST', '/add-marker', true);
+                        let body = 'lat=' + encodeURIComponent(position.coords.latitude) +
+                                   '&lon=' + encodeURIComponent(position.coords.longitude) +
+                                   '&comment=' + encodeURIComponent($("#comment").val());
+                        xhr.send(body);
+
+                        xhr.onreadystatechange = function() {
+                          if (this.readyState != 4) return;
+                          if (this.status != 200) {
+                            alert( 'error: ' + (this.status ? this.statusText : 'request has not been set') );
+                            return;
+                          }
+                          let response = JSON.parse(this.responseText);
+                        }
+                    
+                    
+                    
                       const infoWindow = new google.maps.InfoWindow({
                         content: $("#comment").val()
                       });

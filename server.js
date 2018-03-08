@@ -134,7 +134,6 @@ app.get("/user-inf", (request, response) => {
 /************/
 /* +POSTS+ */
 /************/
-
 // POST REGISTRATION
 app.post('/register', (request, response,) => {
   // check if email is already used
@@ -199,7 +198,9 @@ app.post("/logout", function(request, response) {
 });
 /***********************************/
 app.post("/add-marker", function(request, response) {
-          markers.push({user:, coords: {lat:123, lon: 123}});
+          markers.push({user: request.session.passport.user, comment: request.body["comment"], coords: {lat: request.body["lat"], lon: request.body["lon"]}});
+          response.json({error: 0});
+  console.log(markers)
 });
 /************/
 /* -POSTS- */
