@@ -61,18 +61,59 @@
               let response = JSON.parse(this.responseText);
                 //set the map
                 navigator.geolocation.getCurrentPosition(function(position) { 
-                  let sergievskaya = {lat: position.coords.latitude, lng: position.coords.longitude};
+                  let myPosition = {lat: position.coords.latitude, lng: position.coords.longitude};
                   const map = new google.maps.Map(document.getElementById("map-block"), {
                       zoom: 16,
-                      center: sergievskaya
+                      center: myPosition
                     });
+                  
+                  // GET all markers by other users
+                    xhr.open('GET', '/markers', true);
+                    xhr.send();
+                   
+                    xhr.onreadystatechange = function() {
+                      if (this.readyState != 4) return;
+                      if (this.status != 200) {
+                        alert( 'error: ' + (this.status ? this.statusText : 'request has not been set') );
+                        return;
+                      }
+                      let response = JSON.parse(this.responseText);
+                      if(response.markers.length > 0) {
+                        for(let i = 0; i < response.markers.length; i++) {
+                            const infoWindowOth = new google.maps.InfoWindow({
+                              content: response.markers[i]["comment"]
+                            });
+                            const markerOth = new google.maps.Marker({
+                              position: {lat: parseInt(response.markers[i]["coords"]["lat"]), lng: parseInt(response.markers[i]["coords"]["lng"])},
+                              map: map,
+                              icon: {
+                                      url: "data:image/png;base64, " + response.markers[i]["img"],
+                                      scaledSize: new google.maps.Size(32, 32),
+                                      origin: new google.maps.Point(0, 0),
+                                      anchor: new google.maps.Point(0, 32)
+                                    }
+                            });
+
+                            markerOth.addListener('click', function() {
+                              infoWindowOth.open(map, markerOth);
+                            });
+                        }
+                      }
+                    }
+                    
+                  
+                  
+                  
                   $("#start-searching").click(() => {
                     const xhr = new XMLHttpRequest();
 
                         xhr.open('POST', '/add-marker', true);
+                        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                    
                         let body = 'lat=' + encodeURIComponent(position.coords.latitude) +
                                    '&lon=' + encodeURIComponent(position.coords.longitude) +
-                                   '&comment=' + encodeURIComponent($("#comment").val());
+                                   '&comment=' + encodeURIComponent($("#comment").val()) +
+                                   '&img=' + encodeURIComponent(response.img);
                         xhr.send(body);
 
                         xhr.onreadystatechange = function() {
@@ -90,7 +131,7 @@
                         content: $("#comment").val()
                       });
                       const marker = new google.maps.Marker({
-                        position: sergievskaya,
+                        position: myPosition,
                         map: map,
                         icon: {
                                 url: "data:image/png;base64, " + response.img,

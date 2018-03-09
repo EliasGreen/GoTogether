@@ -37,7 +37,6 @@ promise_connection.then(function(db){
 let markers = [];
 /*********************************************/
 
-
 /******************************/
 // set store
 /******************************/
@@ -127,6 +126,11 @@ app.get("/user-inf", (request, response) => {
     });
 });
 
+// GET all markers
+app.get("/markers", (request, response) => {
+   response.json({markers: markers});
+});
+
 /************/
  /* -Gets- */
 /************/
@@ -198,7 +202,7 @@ app.post("/logout", function(request, response) {
 });
 /***********************************/
 app.post("/add-marker", function(request, response) {
-          markers.push({user: request.session.passport.user, comment: request.body["comment"], coords: {lat: request.body["lat"], lon: request.body["lon"]}});
+          markers.push({user: request.session.passport.user, comment: request.body["comment"], img: request.body["img"], coords: {lat: request.body["lat"], lng: request.body["lon"]}});
           response.json({error: 0});
   console.log(markers)
 });
