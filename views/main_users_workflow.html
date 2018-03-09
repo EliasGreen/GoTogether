@@ -18,19 +18,147 @@
   </head>
   <body>
     
-    <header>
-      <button id="logout">Logout</button>
-    </header>
+    <div id="main-block">
+     
+      <div id="map-block"></div>
+      
+      <div id="user-inf-block">
+        <img id="user-avatar" alt="user-avatar">
+        <div id="name"></div>
+        <div id="lastname"></div>
+        <button id="logout">
+          Logout
+        </button>
+        <div class="line"></div>
+        <h3>
+          Your comment:
+        </h3>
+        <textarea id="comment" name="comment" cols="40" rows="9"></textarea>
+        <button id="start-searching">
+          Find a partner!
+        </button>
+      </div>
+      
+    </div> 
+    <!-- Scripts -->
+    
+    <script> 
+      function initMap() {
+         if ("geolocation" in navigator) {
+           // get user img
+           const xhr = new XMLHttpRequest();
 
-    <main>
-      main
-    </main>
+            xhr.open('GET', '/user-inf', true);
 
-    <footer>
-      footer
-    </footer>
+            xhr.send();
 
-    <!-- Your web-app is https, so your scripts need to be too -->
+            xhr.onreadystatechange = function() {
+              if (this.readyState != 4) return;
+              if (this.status != 200) {
+                alert( 'error: ' + (this.status ? this.statusText : 'request has not been set') );
+                return;
+              }
+              let response = JSON.parse(this.responseText);
+                //set the map
+                navigator.geolocation.getCurrentPosition(function(position) { 
+                  let myPosition = {lat: position.coords.latitude, lng: position.coords.longitude};
+                  const map = new google.maps.Map(document.getElementById("map-block"), {
+                      zoom: 16,
+                      center: myPosition
+                    });
+                  
+                  // GET all markers by other users
+                    xhr.open('GET', '/markers', true);
+                    xhr.send();
+                   
+                    xhr.onreadystatechange = function() {
+                      if (this.readyState != 4) return;
+                      if (this.status != 200) {
+                        alert( 'error: ' + (this.status ? this.statusText : 'request has not been set') );
+                        return;
+                      }
+                      let response = JSON.parse(this.responseText);
+                      if(response.markers.length > 0) {
+                        for(let i = 0; i < response.markers.length; i++) {
+                            const infoWindowOth = new google.maps.InfoWindow({
+                              content: response.markers[i]["comment"]
+                            });
+                            const markerOth = new google.maps.Marker({
+                              position: {lat: parseInt(response.markers[i]["coords"]["lat"]), lng: parseInt(response.markers[i]["coords"]["lng"])},
+                              map: map,
+                              icon: {
+                                      url: "data:image/png;base64, " + response.markers[i]["img"],
+                                      scaledSize: new google.maps.Size(32, 32),
+                                      origin: new google.maps.Point(0, 0),
+                                      anchor: new google.maps.Point(0, 32)
+                                    }
+                            });
+
+                            markerOth.addListener('click', function() {
+                              infoWindowOth.open(map, markerOth);
+                            });
+                        }
+                      }
+                    }
+                    
+                  
+                  
+                  
+                  $("#start-searching").click(() => {
+                    const xhr = new XMLHttpRequest();
+
+                        xhr.open('POST', '/add-marker', true);
+                        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                    
+                        let body = 'lat=' + encodeURIComponent(position.coords.latitude) +
+                                   '&lon=' + encodeURIComponent(position.coords.longitude) +
+                                   '&comment=' + encodeURIComponent($("#comment").val()) +
+                                   '&img=' + encodeURIComponent(response.img);
+                        xhr.send(body);
+
+                        xhr.onreadystatechange = function() {
+                          if (this.readyState != 4) return;
+                          if (this.status != 200) {
+                            alert( 'error: ' + (this.status ? this.statusText : 'request has not been set') );
+                            return;
+                          }
+                          let response = JSON.parse(this.responseText);
+                        }
+                    
+                    
+                    
+                      const infoWindow = new google.maps.InfoWindow({
+                        content: $("#comment").val()
+                      });
+                      const marker = new google.maps.Marker({
+                        position: myPosition,
+                        map: map,
+                        icon: {
+                                url: "data:image/png;base64, " + response.img,
+                                scaledSize: new google.maps.Size(32, 32),
+                                origin: new google.maps.Point(0, 0),
+                                anchor: new google.maps.Point(0, 32)
+                              }
+                      });
+
+                    marker.addListener('click', function() {
+                      infoWindow.open(map, marker);
+                    });
+
+                  });
+                });
+              
+              }   
+            } 
+    else {
+            alert("geolocation is now working on your device/browser");
+          }
+                }
+    </script>
+    
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxlG02FmqKCtr04H3t6RQjA6D3u23K27I&callback=initMap">
+    </script>
     <script src="https://code.jquery.com/jquery-2.2.1.min.js"
             integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00="
             crossorigin="anonymous"></script>

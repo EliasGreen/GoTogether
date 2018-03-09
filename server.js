@@ -27,17 +27,15 @@ const mongoose = require('mongoose');
 // connection URL
 const url = process.env.MONGOLAB_URI;      
 // connection
-const promise_connection = mongoose.connect(url, {
-	useMongoClient: true
-});
+const promise_connection = mongoose.connect(url);
 let db = mongoose.connection;
 // if connection is success
 promise_connection.then(function(db){
 	console.log('Connected to mongodb');
 });
-
+// markers storage 
+let markers = [];
 /*********************************************/
-
 
 /******************************/
 // set store
@@ -108,7 +106,29 @@ app.get("/", (request, response) => {
 
 // GET MAIN PAGE
 app.get("/main", (request, response) => {
-  response.sendFile(__dirname + '/views/main_users_workflow.html');
+  if(request.isAuthenticated()) {
+    response.sendFile(__dirname + '/views/main_users_workflow.html');
+  }
+  else {
+    response.sendFile(__dirname + '/views/index.html');
+  }
+});
+
+// GET infromation about current loged in user
+app.get("/user-inf", (request, response) => {
+  userModel.findById(request.session.passport.user, (err, user) => {
+         if(!err) {
+           response.json({name: user.name, lastname: user.lastname, img: user.img});
+         } 
+         else {
+           console.log("ERROR!: ", err);
+         } 
+    });
+});
+
+// GET all markers
+app.get("/markers", (request, response) => {
+   response.json({markers: markers});
 });
 
 /************/
@@ -118,7 +138,6 @@ app.get("/main", (request, response) => {
 /************/
 /* +POSTS+ */
 /************/
-
 // POST REGISTRATION
 app.post('/register', (request, response,) => {
   // check if email is already used
@@ -180,6 +199,12 @@ app.post("/logout", function(request, response) {
           request.session.destroy(function(err) {
           response.status(200).clearCookie('connect.sid', {path: '/'}).json({error: 0});
      })
+});
+/***********************************/
+app.post("/add-marker", function(request, response) {
+          markers.push({user: request.session.passport.user, comment: request.body["comment"], img: request.body["img"], coords: {lat: request.body["lat"], lng: request.body["lon"]}});
+          response.json({error: 0});
+  console.log(markers)
 });
 /************/
 /* -POSTS- */
